@@ -21,9 +21,7 @@
         "swiftmailer/swiftmailer": "~5.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.5",
-        "symfony/finder": ">=2.3",
-        "symfony/config": ">=2.3"
+        "phpunit/phpunit": "~4.5"
     },
     "autoload": {
         "psr-0": { "Accord\\MandrillSwiftMailer": "" }
