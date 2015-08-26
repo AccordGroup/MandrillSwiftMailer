@@ -24,7 +24,7 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
     protected function createTransport()
     {
         $transport = new MandrillTransport($this->dispatcher);
-        $transport->setApiKey('AexOlO8l1E1JE_7jEXbSpQ');
+        $transport->setApiKey(getenv('MANDRILL_TEST_API_KEY'));
         return $transport;
     }
 
