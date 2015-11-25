@@ -106,18 +106,14 @@ class MandrillTransport implements Swift_Transport
 
         $mandrill = $this->createMandrill();
 
-        try {
-            $this->resultApi = $mandrill->messages->send($mandrillMessage);
+        $this->resultApi = $mandrill->messages->send($mandrillMessage);
 
-            foreach ($this->resultApi as $item) {
-                if ($item['status'] === 'sent' || $item['status'] === 'queued') {
-                    $sendCount++;
-                } else {
-                    $failedRecipients[] = $item['email'];
-                }
+        foreach ($this->resultApi as $item) {
+            if ($item['status'] === 'sent' || $item['status'] === 'queued') {
+                $sendCount++;
+            } else {
+                $failedRecipients[] = $item['email'];
             }
-
-        } catch (\Exception $e) {
         }
 
         if ($event) {
