@@ -28,6 +28,20 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         return $transport;
     }
 
+    public function testInlineCss()
+    {
+        $transport = $this->createTransport();
+        $message = new \Swift_Message('Test Subject', 'Foo bar');
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name')
+        ;
+        $message->getHeaders()->addTextHeader('X-MC-InlineCSS', true);
+        $mandrillMessage = $transport->getMandrillMessage($message);
+        $this->assertEquals(true, $mandrillMessage['inline_css']);
+        $this->assertMessageSendable($message);
+    }
+
     public function testTags()
     {
         $transport = $this->createTransport();
