@@ -206,6 +206,7 @@ class MandrillTransport implements Swift_Transport
         $attachments = array();
         $headers = array();
         $tags = array();
+        $inlineCss = null;
 
         foreach ($toAddresses as $toEmail => $toName) {
             $to[] = array(
@@ -271,6 +272,10 @@ class MandrillTransport implements Swift_Transport
             }
         }
 
+        if ($message->getHeaders()->has('X-MC-InlineCSS')) {
+            $inlineCss = $message->getHeaders()->get('X-MC-InlineCSS')->getValue();
+        }
+
         if($message->getHeaders()->has('X-MC-Tags')){
             /** @var \Swift_Mime_Headers_UnstructuredHeader $tagsHeader */
             $tagsHeader = $message->getHeaders()->get('X-MC-Tags');
@@ -285,6 +290,7 @@ class MandrillTransport implements Swift_Transport
             'from_name'  => $fromAddresses[$fromEmails[0]],
             'to'         => $to,
             'headers'    => $headers,
+            'inline_css' => $inlineCss,
             'tags'       => $tags
         );
 
