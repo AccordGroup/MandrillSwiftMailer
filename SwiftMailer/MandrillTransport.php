@@ -206,6 +206,7 @@ class MandrillTransport implements Swift_Transport
         $attachments = array();
         $headers = array();
         $tags = array();
+        $tags = array();
 
         foreach ($toAddresses as $toEmail => $toName) {
             $to[] = array(
@@ -269,6 +270,10 @@ class MandrillTransport implements Swift_Transport
                     $bodyText = $child->getBody();
                 }
             }
+        }
+
+        if ($message->getHeaders()->has('List-Unsubscribe')) {
+            $headers['List-Unsubscribe'] = $message->getHeaders()->get('List-Unsubscribe')->getValue();
         }
 
         if($message->getHeaders()->has('X-MC-Tags')){
