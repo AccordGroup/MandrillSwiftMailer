@@ -206,7 +206,6 @@ class MandrillTransport implements Swift_Transport
         $attachments = array();
         $headers = array();
         $tags = array();
-        $tags = array();
 
         foreach ($toAddresses as $toEmail => $toName) {
             $to[] = array(
