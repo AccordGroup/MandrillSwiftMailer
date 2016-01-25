@@ -14,5 +14,5 @@ Require the package with composer
 
     $transport = new MandrillTransport($dispatcher);
     $transport->setApiKey('ABCDEFG12345');
-    transport->setAsync(true);               # Optional
+    $transport->setAsync(true); # Optional
     $transport->send($message);
