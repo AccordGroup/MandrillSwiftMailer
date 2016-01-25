@@ -28,6 +28,14 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         return $transport;
     }
 
+    protected function createTransportAsync()
+    {
+        $transport = new MandrillTransport($this->dispatcher);
+        $transport->setApiKey(getenv('MANDRILL_TEST_API_KEY'));
+        $transport->setAsync(true);
+        return $transport;
+    }
+
     public function testTags()
     {
         $transport = $this->createTransport();
@@ -125,6 +133,22 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
 
         $this->assertNull($mandrillMessage['html'], 'Plaintext only email should not contain HTML counterpart');
         $this->assertEquals('Foo bar', $mandrillMessage['text']);
+
+        $this->assertMessageSendable($message);
+    }
+
+    public function testPlaintextMessageWithAsyncTransport()
+    {
+        $transport = $this->createTransportAsync();
+
+        $message = new \Swift_Message('Test Subject', 'Foo bar', 'text/plain');
+
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name')
+        ;
+
+        $mandrillMessage = $transport->getMandrillMessage($message);
 
         $this->assertMessageSendable($message);
     }

@@ -23,6 +23,9 @@ class MandrillTransport implements Swift_Transport
     /** @var string|null */
     protected $apiKey;
 
+    /** @var bool|null */
+    protected $async;
+
     /** @var array|null */
     protected $resultApi;
 
@@ -33,6 +36,7 @@ class MandrillTransport implements Swift_Transport
     {
         $this->dispatcher = $dispatcher;
         $this->apiKey = null;
+        $this->async = null;
     }
 
     /**
@@ -74,6 +78,23 @@ class MandrillTransport implements Swift_Transport
     {
         return $this->apiKey;
     }
+    /**
+     * @param bool $async
+     * @return $this
+     */
+    public function setAsync($async)
+    {
+        $this->async = $async;
+        return $this;
+    }
+
+    /**
+     * @return null|bool
+     */
+    public function getAsync()
+    {
+        return $this->async;
+    }
 
     /**
      * @return Mandrill
@@ -106,7 +127,7 @@ class MandrillTransport implements Swift_Transport
 
         $mandrill = $this->createMandrill();
 
-        $this->resultApi = $mandrill->messages->send($mandrillMessage);
+        $this->resultApi = $mandrill->messages->send($mandrillMessage, $this->async);
 
         foreach ($this->resultApi as $item) {
             if ($item['status'] === 'sent' || $item['status'] === 'queued') {
