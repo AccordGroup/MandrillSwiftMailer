@@ -57,6 +57,26 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         $this->assertMessageSendable($message);
     }
 
+    public function testListUnsubscribe()
+    {
+        $transport = $this->createTransport();
+
+        $message = new \Swift_Message('Test Subject', 'Foo bar');
+
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name')
+        ;
+
+        $message->getHeaders()->addTextHeader('List-Unsubscribe', '<mailto:unsubscribe@exemple.com>');
+
+        $mandrillMessage = $transport->getMandrillMessage($message);
+
+        $this->assertEquals('<mailto:unsubscribe@exemple.com>', $mandrillMessage['headers']['List-Unsubscribe']);
+
+        $this->assertMessageSendable($message);
+    }
+
     public function testMultipartNullContentType()
     {
         $transport = $this->createTransport();

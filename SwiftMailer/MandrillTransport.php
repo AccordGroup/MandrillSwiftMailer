@@ -292,6 +292,10 @@ class MandrillTransport implements Swift_Transport
             }
         }
 
+        if ($message->getHeaders()->has('List-Unsubscribe')) {
+            $headers['List-Unsubscribe'] = $message->getHeaders()->get('List-Unsubscribe')->getValue();
+        }
+
         if($message->getHeaders()->has('X-MC-Tags')){
             /** @var \Swift_Mime_Headers_UnstructuredHeader $tagsHeader */
             $tagsHeader = $message->getHeaders()->get('X-MC-Tags');
