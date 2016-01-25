@@ -36,6 +36,20 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         return $transport;
     }
 
+    public function testInlineCss()
+    {
+        $transport = $this->createTransport();
+        $message = new \Swift_Message('Test Subject', 'Foo bar');
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name')
+        ;
+        $message->getHeaders()->addTextHeader('X-MC-InlineCSS', true);
+        $mandrillMessage = $transport->getMandrillMessage($message);
+        $this->assertEquals(true, $mandrillMessage['inline_css']);
+        $this->assertMessageSendable($message);
+    }
+
     public function testTags()
     {
         $transport = $this->createTransport();
@@ -68,11 +82,11 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
             ->addFrom('from@example.com', 'From Name')
         ;
 
-        $message->getHeaders()->addTextHeader('List-Unsubscribe', '<mailto:unsubscribe@exemple.com>');
+        $message->getHeaders()->addTextHeader('List-Unsubscribe', '<mailto:unsubscribe@example.com>');
 
         $mandrillMessage = $transport->getMandrillMessage($message);
 
-        $this->assertEquals('<mailto:unsubscribe@exemple.com>', $mandrillMessage['headers']['List-Unsubscribe']);
+        $this->assertEquals('<mailto:unsubscribe@example.com>', $mandrillMessage['headers']['List-Unsubscribe']);
 
         $this->assertMessageSendable($message);
     }
@@ -95,7 +109,6 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         $this->assertEquals('<p>Foo bar</p>', $mandrillMessage['html'], 'Multipart email should contain HTML message');
 
         $this->assertMessageSendable($message);
-
     }
 
     public function testMultipartPlaintextFirst()
@@ -306,7 +319,5 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
             );
         }
     }
-
-
 
 }
