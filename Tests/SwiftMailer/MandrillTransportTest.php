@@ -181,7 +181,25 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
             ->addFrom('from@example.com', 'From Name')
         ;
 
+        $this->assertMessageSendable($message, $transport);
+    }
+
+    public function testMessageWithAutoText()
+    {
+        $transport = $this->createTransport();
+
+        $message = new \Swift_Message('Test Subject', '<p>Foo bar</p>', 'text/html');
+
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name')
+        ;
+
+        $message->getHeaders()->addTextHeader('X-MC-Autotext', 'y');
+
         $mandrillMessage = $transport->getMandrillMessage($message);
+
+        $this->assertTrue($mandrillMessage['auto_text'], 'auto_text is not set to true');
 
         $this->assertMessageSendable($message);
     }
@@ -280,12 +298,12 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
 
     /**
      * Performs a test send through the Mandrill API. Provides details of failure if there are any problems.
-     *
+     * @param MandrillTransport|null $transport
      * @param \Swift_Message $message
      */
-    protected function assertMessageSendable(\Swift_Message $message)
+    protected function assertMessageSendable(\Swift_Message $message, $transport = null)
     {
-        $transport = $this->createTransport();
+        if(!$transport) $transport = $this->createTransport();
         $result = $transport->send($message);
         $resultApi = $transport->getResultApi();
 
