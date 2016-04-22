@@ -36,6 +36,11 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         return $transport;
     }
 
+	protected function createPngContent()
+	{
+		return base64_decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEX/TQBcNTh/AAAAAXRSTlPM0jRW/QAAAApJREFUeJxjYgAAAAYAAzY3fKgAAAAASUVORK5CYII=");
+	}
+
     public function testInlineCss()
     {
         $transport = $this->createTransport();
@@ -214,6 +219,9 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         $attachment = new \Swift_Attachment('FILE_CONTENTS', 'filename.txt', 'text/plain');
         $message->attach($attachment);
 
+		$image = new \Swift_Image($this->createPngContent(), 'pixel.png', 'image/png');
+		$cid = $message->embed($image);
+
         $message
             ->addTo('to@example.com', 'To Name')
             ->addFrom('from@example.com', 'From Name')
@@ -239,6 +247,8 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         $this->assertMandrillMessageContainsRecipient('bcc-2@example.com', 'BCC 2 Name', 'bcc', $mandrillMessage);
 
         $this->assertMandrillMessageContainsAttachment('text/plain', 'filename.txt', 'FILE_CONTENTS', $mandrillMessage);
+        $this->assertMandrillMessageContainsImage('image/png', $cid, $this->createPngContent(), $mandrillMessage);
+
 
         $this->assertArrayHasKey('Reply-To', $mandrillMessage['headers']);
         $this->assertEquals('reply-to@example.com <Reply To Name>', $mandrillMessage['headers']['Reply-To']);
@@ -260,6 +270,23 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
             }
         }
         $this->fail(sprintf('Expected Mandrill message to contain a %s attachment named %s', $type, $name));
+    }
+
+
+    /**
+     * @param string $type
+     * @param string $cid
+     * @param string $content
+     * @param array $message
+     */
+    protected function assertMandrillMessageContainsImage($type, $cid, $content, array $message){
+        foreach($message['images'] as $image){
+            if($image['type'] === $type && sprintf('cid:%s',$image['name']) === $cid ){
+                $this->assertEquals($content, base64_decode($image['content']));
+                return;
+            }
+        }
+        $this->fail(sprintf('Expected Mandrill message to contain an %s image with cid %s', $type, $name));
     }
 
     /**
