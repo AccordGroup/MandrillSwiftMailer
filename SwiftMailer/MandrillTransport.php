@@ -226,6 +226,7 @@ class MandrillTransport implements Swift_Transport
 
         $to = array();
         $attachments = array();
+        $images = array();
         $headers = array();
         $tags = array();
         $inlineCss = null;
@@ -277,7 +278,14 @@ class MandrillTransport implements Swift_Transport
 
         foreach ($message->getChildren() as $child) {
 
-            if ($child instanceof Swift_Attachment) {
+           if ($child instanceof \Swift_Image) {
+                $images[] = array(
+                    'type'    => $child->getContentType(),
+                    'name'    => $child->getId(),
+                    'content' => base64_encode($child->getBody()),
+                );
+           }
+           elseif ($child instanceof Swift_Attachment && ! ($child instanceof \Swift_Image)) {
                 $attachments[] = array(
                     'type'    => $child->getContentType(),
                     'name'    => $child->getFilename(),
@@ -321,6 +329,10 @@ class MandrillTransport implements Swift_Transport
 
         if (count($attachments) > 0) {
             $mandrillMessage['attachments'] = $attachments;
+        }
+        
+        if (count($images) > 0) {
+            $mandrillMessage['images'] = $images;
         }
 
         if ($message->getHeaders()->has('X-MC-Autotext')){
