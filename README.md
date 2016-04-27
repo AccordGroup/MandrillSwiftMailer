@@ -4,6 +4,8 @@
 
 A SwiftMailer transport implementation for Mandrill
 
+If you'd like us to implement more [Mandrill-specific features](https://mandrillapp.com/api/docs/messages.JSON.html), let us know by [submitting an issue](https://github.com/AccordGroup/MandrillSwiftMailer/issues/new).
+
 ## Installation
 
 Require the package with composer
