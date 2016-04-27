@@ -325,11 +325,11 @@ class MandrillTransport implements Swift_Transport
         }
 
         if ($message->getHeaders()->has('X-MC-Autotext')){
-            $autoTextHeader = $message->getHeaders()->get('X-MC-Autotext')->getValue();
-            if(in_array($autoTextHeader, array('true','on','yes','y'))){
+            $autoText = $message->getHeaders()->get('X-MC-Autotext')->getValue();
+            if(in_array($autoText, array('true','on','yes','y', true), true)){
                 $mandrillMessage['auto_text'] = true;
             }
-            if(in_array($autoTextHeader, array('false','off','no','n'))){
+            if(in_array($autoText, array('false','off','no','n', false), true)){
                 $mandrillMessage['auto_text'] = false;
             }
         }

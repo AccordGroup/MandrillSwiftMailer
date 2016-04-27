@@ -204,6 +204,24 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         $this->assertMessageSendable($message);
     }
 
+    public function testMessageWithBoolAutoText()
+    {
+        $transport = $this->createTransport();
+
+        $message = new \Swift_Message('Test Subject', '<p>Foo bar</p>', 'text/html');
+
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name')
+        ;
+
+        $message->getHeaders()->addTextHeader('X-MC-Autotext', true);
+
+        $mandrillMessage = $transport->getMandrillMessage($message);
+
+        $this->assertTrue($mandrillMessage['auto_text'], 'auto_text is not set to true');
+    }
+
     public function testHtmlMessage()
     {
         $transport = $this->createTransport();
