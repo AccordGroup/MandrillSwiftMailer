@@ -343,7 +343,7 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
                 return;
             }
         }
-        $this->fail(sprintf('Expected Mandrill message to contain an %s image with cid %s', $type, $name));
+        $this->fail(sprintf('Expected Mandrill message to contain an %s image with cid %s', $type, $cid));
     }
 
     /**
