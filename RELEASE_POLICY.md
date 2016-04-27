@@ -13,6 +13,8 @@ As of 2016-04-27, this project follows Semantic Versioning, which uses the MAJOR
 
 ## Release Schedule
 
+The creation of a release should be considered when a commit is pushed to master.
+
 * MAJOR - Release dates for major changes are decided by the AccordGroup/MandrillSwiftMailer team members
 * MINOR - Released on the following Monday
 * PATCH
