@@ -303,9 +303,8 @@ class MandrillTransport implements Swift_Transport
         }
 
         if($message->getHeaders()->has('X-MC-Tags')){
-            /** @var \Swift_Mime_Headers_UnstructuredHeader $tagsHeader */
-            $tagsHeader = $message->getHeaders()->get('X-MC-Tags');
-            $tags = explode(',', $tagsHeader->getValue());
+            $tags = $message->getHeaders()->get('X-MC-Tags')->getValue();
+            if(!is_array($tags)) $tags = explode(',', $tags);
         }
 
         $mandrillMessage = array(

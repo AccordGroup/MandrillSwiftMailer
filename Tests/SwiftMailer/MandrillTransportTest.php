@@ -71,6 +71,27 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         $this->assertMessageSendable($message);
     }
 
+    public function testTagsArray()
+    {
+        $transport = $this->createTransport();
+
+        $message = new \Swift_Message('Test Subject', 'Foo bar');
+
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name')
+        ;
+
+        $message->getHeaders()->addTextHeader('X-MC-Tags', array('foo','bar'));
+
+        $mandrillMessage = $transport->getMandrillMessage($message);
+
+        $this->assertEquals('foo', $mandrillMessage['tags'][0]);
+        $this->assertEquals('bar', $mandrillMessage['tags'][1]);
+
+        $this->assertMessageSendable($message);
+    }
+
     public function testListUnsubscribe()
     {
         $transport = $this->createTransport();

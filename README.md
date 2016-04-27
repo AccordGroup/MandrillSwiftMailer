@@ -29,6 +29,10 @@ Automatically generate a text part for messages that are not given text
 
     $message->getHeaders()->addTextHeader('X-MC-Tags', 'foo,bar');
     
+or
+
+    $message->getHeaders()->addTextHeader('X-MC-Tags', array('foo','bar'));
+    
 ### inline_css
 
     $message->getHeaders()->addTextHeader('X-MC-InlineCSS', true);
