@@ -3,8 +3,11 @@
 namespace Accord\MandrillSwiftMailer\Tests\SwiftMailer;
 
 use Accord\MandrillSwiftMailer\SwiftMailer\MandrillTransport;
+use Symfony\Component\Config\Definition\Processor;
 
 class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
+
+    const MANDRILL_TEST_API_KEY = 'ABCDEFG1234567';
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Swift_Events_EventDispatcher
@@ -24,14 +27,14 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
     protected function createTransport()
     {
         $transport = new MandrillTransport($this->dispatcher);
-        $transport->setApiKey(getenv('MANDRILL_TEST_API_KEY'));
+        $transport->setApiKey(self::MANDRILL_TEST_API_KEY);
         return $transport;
     }
 
     protected function createTransportAsync()
     {
         $transport = new MandrillTransport($this->dispatcher);
-        $transport->setApiKey(getenv('MANDRILL_TEST_API_KEY'));
+        $transport->setApiKey(self::MANDRILL_TEST_API_KEY);
         $transport->setAsync(true);
         return $transport;
     }
@@ -370,22 +373,25 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
     protected function assertMessageSendable(\Swift_Message $message, $transport = null)
     {
         if(!$transport) $transport = $this->createTransport();
-        $result = $transport->send($message);
-        $resultApi = $transport->getResultApi();
 
-        if(count($resultApi) === 0 || $result === 0){
+        $this->assertNotNull($transport->getApiKey(), 'No API key specified');
+
+        $parameters = array(
+            'message' => $transport->getMandrillMessage($message)
+        );
+
+        try{
+            $configuration = new MessageSendConfiguration();
+            $processor = new Processor();
+            $processor->processConfiguration($configuration, $parameters);
+        }
+        catch(\Exception $e){
             $this->fail(sprintf(
-                'Expected at least one email to be processed by Mandrill Test API (%s items in API response, %s reported as sent by transport)',
-                count($resultApi),
-                $result
+                "Mandrill message contains errors, %s\n\n%s",
+                $e->getMessage(),
+                json_encode($parameters['message'], JSON_PRETTY_PRINT)
             ));
         }
-
-        foreach($resultApi as $item){
-            $this->assertResultApiItemQueuedOrSent($item);
-        }
-
-
     }
 
     protected function assertResultApiItemQueuedOrSent(array $item)

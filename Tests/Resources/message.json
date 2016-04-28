@@ -1,0 +1,82 @@
+{
+  "html": "<p>Example HTML content</p>",
+  "text": "Example text content",
+  "subject": "example subject",
+  "from_email": "message.from_email@example.com",
+  "from_name": "Example Name",
+  "to": [
+    {
+      "email": "recipient.email@example.com",
+      "name": "Recipient Name",
+      "type": "to"
+    }
+  ],
+  "headers": {
+    "Reply-To": "message.reply@example.com"
+  },
+  "important": false,
+  "track_opens": true,
+  "track_clicks": true,
+  "auto_text": true,
+  "auto_html": true,
+  "inline_css": true,
+  "url_strip_qs": true,
+  "preserve_recipients": true,
+  "view_content_link": true,
+  "bcc_address": "message.bcc_address@example.com",
+  "tracking_domain": "example.com",
+  "signing_domain": "example.com",
+  "return_path_domain": "example.com",
+  "merge": true,
+  "merge_language": "mailchimp",
+  "global_merge_vars": [
+    {
+      "name": "merge1",
+      "content": "merge1 content"
+    }
+  ],
+  "merge_vars": [
+    {
+      "rcpt": "recipient.email@example.com",
+      "vars": [
+        {
+          "name": "merge2",
+          "content": "merge2 content"
+        }
+      ]
+    }
+  ],
+  "tags": [
+    "password-resets"
+  ],
+  "subaccount": "customer-123",
+  "google_analytics_domains": [
+    "example.com"
+  ],
+  "google_analytics_campaign": "message.from_email@example.com",
+  "metadata": {
+    "website": "www.example.com"
+  },
+  "recipient_metadata": [
+    {
+      "rcpt": "recipient.email@example.com",
+      "values": {
+        "user_id": 123456
+      }
+    }
+  ],
+  "attachments": [
+    {
+      "type": "text/plain",
+      "name": "myfile.txt",
+      "content": "ZXhhbXBsZSBmaWxl"
+    }
+  ],
+  "images": [
+    {
+      "type": "image/png",
+      "name": "IMAGECID",
+      "content": "ZXhhbXBsZSBmaWxl"
+    }
+  ]
+}
