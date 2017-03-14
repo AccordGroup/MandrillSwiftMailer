@@ -100,6 +100,30 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         $this->assertMessageSendable($message);
     }
 
+    public function testSubAccount()
+    {
+        $transport = $this->createTransport();
+
+        $message = new \Swift_Message('Test Subject', 'Foo bar');
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name')
+        ;
+
+        $mandrillMessage = $transport->getMandrillMessage($message);
+
+        $this->assertArrayNotHasKey('subaccount', $mandrillMessage);
+
+        $transport->setSubaccount('account-123');
+
+        $mandrillMessage = $transport->getMandrillMessage($message);
+
+        $this->assertArrayHasKey('subaccount', $mandrillMessage);
+        $this->assertEquals('account-123', $mandrillMessage['subaccount']);
+
+        $this->assertMessageSendable($message);
+    }
+
     public function testListUnsubscribe()
     {
         $transport = $this->createTransport();

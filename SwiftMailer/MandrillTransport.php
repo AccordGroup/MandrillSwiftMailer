@@ -20,17 +20,25 @@ class MandrillTransport implements Swift_Transport
      */
     protected $dispatcher;
 
-    /** @var string|null */
+    /**
+     * @var string|null
+     */
     protected $apiKey;
 
-    /** @var bool|null */
+    /**
+     * @var bool|null
+     */
     protected $async;
 
-    /** @var array|null */
+    /**
+     * @var array|null
+     */
     protected $resultApi;
 
-    /** @var  string|null */
-    protected $subaccount;
+    /**
+     * @var string|null
+     */
+    protected $subAccount;
 
     /**
      * @param Swift_Events_EventDispatcher $dispatcher
@@ -40,7 +48,7 @@ class MandrillTransport implements Swift_Transport
         $this->dispatcher = $dispatcher;
         $this->apiKey = null;
         $this->async = null;
-        $this->subaccount = null;
+        $this->subAccount = null;
     }
 
     /**
@@ -72,7 +80,6 @@ class MandrillTransport implements Swift_Transport
     public function setApiKey($apiKey)
     {
         $this->apiKey = $apiKey;
-
         return $this;
     }
 
@@ -91,7 +98,6 @@ class MandrillTransport implements Swift_Transport
     public function setAsync($async)
     {
         $this->async = $async;
-
         return $this;
     }
 
@@ -105,23 +111,21 @@ class MandrillTransport implements Swift_Transport
 
 
     /**
-     * @param null|string $subaccount
-     *
-     * @return MandrillTransport
+     * @param null|string $subAccount
+     * @return $this
      */
-    public function setSubaccount($subaccount)
+    public function setSubAccount($subAccount)
     {
-        $this->subaccount = $subaccount;
-
+        $this->subAccount = $subAccount;
         return $this;
     }
 
     /**
      * @return null|string
      */
-    public function getSubaccount()
+    public function getSubAccount()
     {
-        return $this->subaccount;
+        return $this->subAccount;
     }
 
     /**
