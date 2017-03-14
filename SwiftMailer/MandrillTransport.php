@@ -29,6 +29,9 @@ class MandrillTransport implements Swift_Transport
     /** @var array|null */
     protected $resultApi;
 
+    /** @var  string|null */
+    protected $subaccount;
+
     /**
      * @param Swift_Events_EventDispatcher $dispatcher
      */
@@ -37,6 +40,7 @@ class MandrillTransport implements Swift_Transport
         $this->dispatcher = $dispatcher;
         $this->apiKey = null;
         $this->async = null;
+        $this->subaccount = null;
     }
 
     /**
@@ -68,6 +72,7 @@ class MandrillTransport implements Swift_Transport
     public function setApiKey($apiKey)
     {
         $this->apiKey = $apiKey;
+
         return $this;
     }
 
@@ -86,6 +91,7 @@ class MandrillTransport implements Swift_Transport
     public function setAsync($async)
     {
         $this->async = $async;
+
         return $this;
     }
 
@@ -97,13 +103,36 @@ class MandrillTransport implements Swift_Transport
         return $this->async;
     }
 
+
+    /**
+     * @param null|string $subaccount
+     *
+     * @return MandrillTransport
+     */
+    public function setSubaccount($subaccount)
+    {
+        $this->subaccount = $subaccount;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSubaccount()
+    {
+        return $this->subaccount;
+    }
+
     /**
      * @return Mandrill
      * @throws \Swift_TransportException
      */
     protected function createMandrill()
     {
-        if($this->apiKey === null) throw new \Swift_TransportException('Cannot create instance of \Mandrill while API key is NULL');
+        if ($this->apiKey === null) {
+            throw new \Swift_TransportException('Cannot create instance of \Mandrill while API key is NULL');
+        }
         return new Mandrill($this->apiKey);
     }
 
@@ -139,7 +168,6 @@ class MandrillTransport implements Swift_Transport
         }
 
         if ($event) {
-
             if ($sendCount > 0) {
                 $event->setResult(Swift_Events_SendEvent::RESULT_SUCCESS);
             } else {
@@ -188,7 +216,7 @@ class MandrillTransport implements Swift_Transport
     {
         $contentType = $message->getContentType();
 
-        if($this->supportsContentType($contentType)){
+        if ($this->supportsContentType($contentType)) {
             return $contentType;
         }
 
@@ -196,7 +224,7 @@ class MandrillTransport implements Swift_Transport
         // as you add another part to the message. We need to access the protected property
         // _userContentType to get the original type.
         $messageRef = new \ReflectionClass($message);
-        if($messageRef->hasProperty('_userContentType')){
+        if ($messageRef->hasProperty('_userContentType')) {
             $propRef = $messageRef->getProperty('_userContentType');
             $propRef->setAccessible(true);
             $contentType = $propRef->getValue($message);
@@ -240,10 +268,9 @@ class MandrillTransport implements Swift_Transport
         }
 
         foreach ($replyToAddresses as $replyToEmail => $replyToName) {
-            if($replyToName){
+            if ($replyToName) {
                 $headers['Reply-To'] = sprintf('%s <%s>', $replyToEmail, $replyToName);
-            }
-            else{
+            } else {
                 $headers['Reply-To'] = $replyToEmail;
             }
         }
@@ -266,37 +293,31 @@ class MandrillTransport implements Swift_Transport
 
         $bodyHtml = $bodyText = null;
 
-        if($contentType === 'text/plain'){
+        if ($contentType === 'text/plain') {
             $bodyText = $message->getBody();
-        }
-        elseif($contentType === 'text/html'){
+        } elseif ($contentType === 'text/html') {
             $bodyHtml = $message->getBody();
-        }
-        else{
+        } else {
             $bodyHtml = $message->getBody();
         }
 
         foreach ($message->getChildren() as $child) {
-
-           if ($child instanceof \Swift_Image) {
+            if ($child instanceof \Swift_Image) {
                 $images[] = array(
                     'type'    => $child->getContentType(),
                     'name'    => $child->getId(),
                     'content' => base64_encode($child->getBody()),
                 );
-           }
-           elseif ($child instanceof Swift_Attachment && ! ($child instanceof \Swift_Image)) {
+            } elseif ($child instanceof Swift_Attachment && ! ($child instanceof \Swift_Image)) {
                 $attachments[] = array(
                     'type'    => $child->getContentType(),
                     'name'    => $child->getFilename(),
                     'content' => base64_encode($child->getBody())
                 );
-            }
-            elseif ($child instanceof Swift_MimePart && $this->supportsContentType($child->getContentType())) {
-                if($child->getContentType() == "text/html"){
+            } elseif ($child instanceof Swift_MimePart && $this->supportsContentType($child->getContentType())) {
+                if ($child->getContentType() == "text/html") {
                     $bodyHtml = $child->getBody();
-                }
-                elseif($child->getContentType() == "text/plain"){
+                } elseif ($child->getContentType() == "text/plain") {
                     $bodyText = $child->getBody();
                 }
             }
@@ -310,9 +331,11 @@ class MandrillTransport implements Swift_Transport
             $inlineCss = $message->getHeaders()->get('X-MC-InlineCSS')->getValue();
         }
 
-        if($message->getHeaders()->has('X-MC-Tags')){
+        if ($message->getHeaders()->has('X-MC-Tags')) {
             $tags = $message->getHeaders()->get('X-MC-Tags')->getValue();
-            if(!is_array($tags)) $tags = explode(',', $tags);
+            if (!is_array($tags)) {
+                $tags = explode(',', $tags);
+            }
         }
 
         $mandrillMessage = array(
@@ -335,14 +358,18 @@ class MandrillTransport implements Swift_Transport
             $mandrillMessage['images'] = $images;
         }
 
-        if ($message->getHeaders()->has('X-MC-Autotext')){
+        if ($message->getHeaders()->has('X-MC-Autotext')) {
             $autoText = $message->getHeaders()->get('X-MC-Autotext')->getValue();
-            if(in_array($autoText, array('true','on','yes','y', true), true)){
+            if (in_array($autoText, array('true','on','yes','y', true), true)) {
                 $mandrillMessage['auto_text'] = true;
             }
-            if(in_array($autoText, array('false','off','no','n', false), true)){
+            if (in_array($autoText, array('false','off','no','n', false), true)) {
                 $mandrillMessage['auto_text'] = false;
             }
+        }
+
+        if ($this->getSubaccount()) {
+            $mandrillMessage['subaccount'] = $this->getSubaccount();
         }
 
         return $mandrillMessage;
@@ -355,5 +382,4 @@ class MandrillTransport implements Swift_Transport
     {
         return $this->resultApi;
     }
-
 }
