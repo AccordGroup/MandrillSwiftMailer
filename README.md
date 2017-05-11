@@ -33,6 +33,15 @@ Automatically generate a text part for messages that are not given text
 
     $message->getHeaders()->addTextHeader('X-MC-Autotext', true);
     
+    
+### Google Analytics tracking
+
+Mandrill supports automatic Google Analytics tracking for your links. [docs](https://mandrill.zendesk.com/hc/en-us/articles/205582577-About-Google-Analytics-Tracking)
+
+    $message->getHeaders()->addTextHeader('X-MC-GoogleAnalytics', 'example.com,www.example.com');
+    // optional defaults to from address
+    $message->getHeaders()->addTextHeader('X-MC-GoogleAnalyticsCampaign', 'campaign');
+    
 ### Tags
 
 An array of string to tag the message with

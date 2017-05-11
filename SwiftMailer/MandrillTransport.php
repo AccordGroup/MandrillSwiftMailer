@@ -372,6 +372,17 @@ class MandrillTransport implements Swift_Transport
             }
         }
 
+        if ($message->getHeaders()->has('X-MC-GoogleAnalytics')) {
+            $analyticsDomains = explode(',', $message->getHeaders()->get('X-MC-GoogleAnalytics')->getValue());
+            if(is_array($analyticsDomains)) {
+                $mandrillMessage['google_analytics_domains'] = $analyticsDomains;
+            }
+        }
+
+        if ($message->getHeaders()->has('X-MC-GoogleAnalyticsCampaign')) {
+            $mandrillMessage['google_analytics_campaign'] = $message->getHeaders()->get('X-MC-GoogleAnalyticsCampaign')->getValue();
+        }
+
         if ($this->getSubaccount()) {
             $mandrillMessage['subaccount'] = $this->getSubaccount();
         }
