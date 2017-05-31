@@ -7,7 +7,7 @@ use Mandrill;
 use \Swift_Events_EventDispatcher;
 use \Swift_Events_EventListener;
 use \Swift_Events_SendEvent;
-use \Swift_Mime_Message;
+use \Swift_Mime_SimpleMessage;
 use \Swift_Transport;
 use \Swift_Attachment;
 use \Swift_MimePart;
@@ -70,6 +70,13 @@ class MandrillTransport implements Swift_Transport
      * Not used
      */
     public function stop()
+    {
+    }
+
+	/**
+	 * Not used
+	 */
+    public function ping()
     {
     }
 
@@ -141,11 +148,11 @@ class MandrillTransport implements Swift_Transport
     }
 
     /**
-     * @param Swift_Mime_Message $message
+     * @param Swift_Mime_SimpleMessage $message
      * @param null $failedRecipients
      * @return int Number of messages sent
      */
-    public function send(Swift_Mime_Message $message, &$failedRecipients = null)
+    public function send(Swift_Mime_SimpleMessage $message, &$failedRecipients = null)
     {
         $this->resultApi = null;
         if ($event = $this->dispatcher->createSendEvent($this, $message)) {
@@ -213,10 +220,10 @@ class MandrillTransport implements Swift_Transport
     }
 
     /**
-     * @param Swift_Mime_Message $message
+     * @param Swift_Mime_SimpleMessage $message
      * @return string
      */
-    protected function getMessagePrimaryContentType(Swift_Mime_Message $message)
+    protected function getMessagePrimaryContentType(Swift_Mime_SimpleMessage $message)
     {
         $contentType = $message->getContentType();
 
@@ -224,7 +231,7 @@ class MandrillTransport implements Swift_Transport
             return $contentType;
         }
 
-        // SwiftMailer hides the content type set in the constructor of Swift_Mime_Message as soon
+        // SwiftMailer hides the content type set in the constructor of Swift_Mime_SimpleMessage as soon
         // as you add another part to the message. We need to access the protected property
         // _userContentType to get the original type.
         $messageRef = new \ReflectionClass($message);
@@ -240,11 +247,11 @@ class MandrillTransport implements Swift_Transport
     /**
      * https://mandrillapp.com/api/docs/messages.php.html#method-send
      *
-     * @param Swift_Mime_Message $message
+     * @param Swift_Mime_SimpleMessage $message
      * @return array Mandrill Send Message
      * @throws \Swift_SwiftException
      */
-    public function getMandrillMessage(Swift_Mime_Message $message)
+    public function getMandrillMessage(Swift_Mime_SimpleMessage $message)
     {
         $contentType = $this->getMessagePrimaryContentType($message);
 
