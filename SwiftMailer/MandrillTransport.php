@@ -233,10 +233,10 @@ class MandrillTransport implements Swift_Transport
 
         // SwiftMailer hides the content type set in the constructor of Swift_Mime_SimpleMessage as soon
         // as you add another part to the message. We need to access the protected property
-        // _userContentType to get the original type.
+        // userContentType to get the original type.
         $messageRef = new \ReflectionClass($message);
-        if ($messageRef->hasProperty('_userContentType')) {
-            $propRef = $messageRef->getProperty('_userContentType');
+        if ($messageRef->hasProperty('userContentType')) {
+            $propRef = $messageRef->getProperty('userContentType');
             $propRef->setAccessible(true);
             $contentType = $propRef->getValue($message);
         }

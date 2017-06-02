@@ -16,7 +16,7 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
 
     protected function setUp()
     {
-        $this->dispatcher = $this->getMock('\Swift_Events_EventDispatcher');
+        $this->dispatcher = $this->createMock('\Swift_Events_EventDispatcher');
     }
 
     /**
