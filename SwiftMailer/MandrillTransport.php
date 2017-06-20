@@ -334,21 +334,6 @@ class MandrillTransport implements Swift_Transport
             }
         }
 
-        if ($message->getHeaders()->has('List-Unsubscribe')) {
-            $headers['List-Unsubscribe'] = $message->getHeaders()->get('List-Unsubscribe')->getValue();
-        }
-
-        if ($message->getHeaders()->has('X-MC-InlineCSS')) {
-            $inlineCss = $message->getHeaders()->get('X-MC-InlineCSS')->getValue();
-        }
-
-        if ($message->getHeaders()->has('X-MC-Tags')) {
-            $tags = $message->getHeaders()->get('X-MC-Tags')->getValue();
-            if (!is_array($tags)) {
-                $tags = explode(',', $tags);
-            }
-        }
-
         $mandrillMessage = array(
             'html'       => $bodyHtml,
             'text'       => $bodyText,
@@ -357,37 +342,61 @@ class MandrillTransport implements Swift_Transport
             'from_name'  => $fromAddresses[$fromEmails[0]],
             'to'         => $to,
             'headers'    => $headers,
-            'inline_css' => $inlineCss,
-            'tags'       => $tags
+            'tags'       => $tags,
+            'inline_css' => null
         );
 
         if (count($attachments) > 0) {
             $mandrillMessage['attachments'] = $attachments;
         }
-        
+
         if (count($images) > 0) {
             $mandrillMessage['images'] = $images;
         }
 
-        if ($message->getHeaders()->has('X-MC-Autotext')) {
-            $autoText = $message->getHeaders()->get('X-MC-Autotext')->getValue();
-            if (in_array($autoText, array('true','on','yes','y', true), true)) {
-                $mandrillMessage['auto_text'] = true;
+        foreach ($message->getHeaders()->getAll() as $header) {
+            if ($header->getFieldType() === \Swift_Mime_Header::TYPE_TEXT) {
+                switch ($header->getFieldName()) {
+                    case 'List-Unsubscribe':
+                        $headers['List-Unsubscribe'] = $header->getValue();
+						$mandrillMessage['headers'] = $headers;
+                        break;
+                    case 'X-MC-InlineCSS':
+                        $mandrillMessage['inline_css'] = $header->getValue();
+                        break;
+                    case 'X-MC-Tags':
+                        $tags = $header->getValue();
+                        if (!is_array($tags)) {
+                            $tags = explode(',', $tags);
+                        }
+                        $mandrillMessage['tags'] = $tags;
+                        break;
+                    case 'X-MC-Autotext':
+                        $autoText = $header->getValue();
+                        if (in_array($autoText, array('true','on','yes','y', true), true)) {
+                            $mandrillMessage['auto_text'] = true;
+                        }
+                        if (in_array($autoText, array('false','off','no','n', false), true)) {
+                            $mandrillMessage['auto_text'] = false;
+                        }
+                        break;
+                    case 'X-MC-GoogleAnalytics':
+                        $analyticsDomains = explode(',', $header->getValue());
+                        if(is_array($analyticsDomains)) {
+                            $mandrillMessage['google_analytics_domains'] = $analyticsDomains;
+                        }
+                        break;
+                    case 'X-MC-GoogleAnalyticsCampaign':
+                        $mandrillMessage['google_analytics_campaign'] = $header->getValue();
+                        break;
+                    default:
+                        if (strncmp($header->getFieldName(), 'X-', 2) === 0) {
+                            $headers[$header->getFieldName()] = $header->getValue();
+							$mandrillMessage['headers'] = $headers;
+                        }
+                        break;
+                }
             }
-            if (in_array($autoText, array('false','off','no','n', false), true)) {
-                $mandrillMessage['auto_text'] = false;
-            }
-        }
-
-        if ($message->getHeaders()->has('X-MC-GoogleAnalytics')) {
-            $analyticsDomains = explode(',', $message->getHeaders()->get('X-MC-GoogleAnalytics')->getValue());
-            if(is_array($analyticsDomains)) {
-                $mandrillMessage['google_analytics_domains'] = $analyticsDomains;
-            }
-        }
-
-        if ($message->getHeaders()->has('X-MC-GoogleAnalyticsCampaign')) {
-            $mandrillMessage['google_analytics_campaign'] = $message->getHeaders()->get('X-MC-GoogleAnalyticsCampaign')->getValue();
         }
 
         if ($this->getSubaccount()) {

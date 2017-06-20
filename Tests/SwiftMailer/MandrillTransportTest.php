@@ -128,6 +128,21 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         $this->assertMessageSendable($message);
     }
 
+	public function testCustomHeaders()
+	{
+		$transport = $this->createTransport();
+		$message = new \Swift_Message('Test Subject', 'Foo bar');
+		$message
+			->addTo('to@example.com', 'To Name')
+			->addFrom('from@example.com', 'From Name')
+		;
+		$message->getHeaders()->addTextHeader('X-Test-Header', true);
+		$mandrillMessage = $transport->getMandrillMessage($message);
+
+		$this->assertEquals(true, $mandrillMessage['headers']['X-Test-Header']);
+		$this->assertMessageSendable($message);
+	}
+
     public function testSubAccount()
     {
         $transport = $this->createTransport();
