@@ -359,7 +359,7 @@ class MandrillTransport implements Swift_Transport
                 switch ($header->getFieldName()) {
                     case 'List-Unsubscribe':
                         $headers['List-Unsubscribe'] = $header->getValue();
-						$mandrillMessage['headers'] = $headers;
+                        $mandrillMessage['headers'] = $headers;
                         break;
                     case 'X-MC-InlineCSS':
                         $mandrillMessage['inline_css'] = $header->getValue();
@@ -392,7 +392,7 @@ class MandrillTransport implements Swift_Transport
                     default:
                         if (strncmp($header->getFieldName(), 'X-', 2) === 0) {
                             $headers[$header->getFieldName()] = $header->getValue();
-							$mandrillMessage['headers'] = $headers;
+                            $mandrillMessage['headers'] = $headers;
                         }
                         break;
                 }
