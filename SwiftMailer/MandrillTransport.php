@@ -261,6 +261,7 @@ class MandrillTransport implements Swift_Transport
         $images = array();
         $headers = array();
         $tags = array();
+        $metadata = array();
         $inlineCss = null;
 
         foreach ($toAddresses as $toEmail => $toName) {
@@ -342,6 +343,10 @@ class MandrillTransport implements Swift_Transport
             }
         }
 
+        if ($message->getHeaders()->has('X-MC-Metadata')) {
+            $metadata = $message->getHeaders()->get('X-MC-Metadata')->getValue();
+        }
+
         $mandrillMessage = array(
             'html'       => $bodyHtml,
             'text'       => $bodyText,
@@ -351,13 +356,14 @@ class MandrillTransport implements Swift_Transport
             'to'         => $to,
             'headers'    => $headers,
             'inline_css' => $inlineCss,
-            'tags'       => $tags
+            'tags'       => $tags,
+            'metadata'   => $metadata
         );
 
         if (count($attachments) > 0) {
             $mandrillMessage['attachments'] = $attachments;
         }
-        
+
         if (count($images) > 0) {
             $mandrillMessage['images'] = $images;
         }
@@ -388,6 +394,7 @@ class MandrillTransport implements Swift_Transport
         }
 
         return $mandrillMessage;
+
     }
 
     /**
