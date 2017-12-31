@@ -46,11 +46,7 @@ Mandrill supports automatic Google Analytics tracking for your links. [docs](htt
 
 An array of string to tag the message with
 
-    $message->getHeaders()->addTextHeader('X-MC-Tags', 'foo,bar');
-    
-or
-
-    $message->getHeaders()->addTextHeader('X-MC-Tags', array('foo','bar'));
+    $message->getHeaders()->addTextHeader('X-MC-Tags', 'foo, bar');
     
 ### Inline CSS
 
