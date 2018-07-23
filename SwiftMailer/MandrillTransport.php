@@ -335,7 +335,11 @@ class MandrillTransport implements Swift_Transport
             $mandrillMessage['images'] = $images;
         }
 
-        if ($message->getHeaders()->has('X-MC-Autotext')){
+        if ($message->getHeaders()->has('X-MC-TrackingDomain')) {
+            $mandrillMessage['tracking_domain'] = $message->getHeaders()->get('X-MC-TrackingDomain')->getValue();
+        }
+
+        if ($message->getHeaders()->has('X-MC-Autotext')) {
             $autoText = $message->getHeaders()->get('X-MC-Autotext')->getValue();
             if(in_array($autoText, array('true','on','yes','y', true), true)){
                 $mandrillMessage['auto_text'] = true;
