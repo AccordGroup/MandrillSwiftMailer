@@ -16,7 +16,7 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
 
     protected function setUp()
     {
-        $this->dispatcher = $this->getMock('\Swift_Events_EventDispatcher');
+        $this->dispatcher = $this->createMock('\Swift_Events_EventDispatcher');
     }
 
     /**
@@ -58,6 +58,34 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         $this->assertMessageSendable($message);
     }
 
+    public function testGoogleAnalytics()
+    {
+        $transport = $this->createTransport();
+        $message = new \Swift_Message('Test Subject', 'Foo bar');
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name')
+        ;
+        $message->getHeaders()->addTextHeader('X-MC-GoogleAnalytics', 'example.com,www.example.com');
+        $mandrillMessage = $transport->getMandrillMessage($message);
+        $this->assertEquals(['example.com','www.example.com'], $mandrillMessage['google_analytics_domains']);
+        $this->assertMessageSendable($message);
+    }
+
+    public function testGoogleAnalyticsCampaign()
+    {
+        $transport = $this->createTransport();
+        $message = new \Swift_Message('Test Subject', 'Foo bar');
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name')
+        ;
+        $message->getHeaders()->addTextHeader('X-MC-GoogleAnalyticsCampaign', 'campaign');
+        $mandrillMessage = $transport->getMandrillMessage($message);
+        $this->assertEquals('campaign', $mandrillMessage['google_analytics_campaign']);
+        $this->assertMessageSendable($message);
+    }
+
     public function testTags()
     {
         $transport = $this->createTransport();
@@ -96,6 +124,45 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
 
         $this->assertEquals('foo', $mandrillMessage['tags'][0]);
         $this->assertEquals('bar', $mandrillMessage['tags'][1]);
+
+        $this->assertMessageSendable($message);
+    }
+
+	public function testCustomHeaders()
+	{
+		$transport = $this->createTransport();
+		$message = new \Swift_Message('Test Subject', 'Foo bar');
+		$message
+			->addTo('to@example.com', 'To Name')
+			->addFrom('from@example.com', 'From Name')
+		;
+		$message->getHeaders()->addTextHeader('X-Test-Header', true);
+		$mandrillMessage = $transport->getMandrillMessage($message);
+
+		$this->assertEquals(true, $mandrillMessage['headers']['X-Test-Header']);
+		$this->assertMessageSendable($message);
+	}
+
+    public function testSubAccount()
+    {
+        $transport = $this->createTransport();
+
+        $message = new \Swift_Message('Test Subject', 'Foo bar');
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name')
+        ;
+
+        $mandrillMessage = $transport->getMandrillMessage($message);
+
+        $this->assertArrayNotHasKey('subaccount', $mandrillMessage);
+
+        $transport->setSubaccount('account-123');
+
+        $mandrillMessage = $transport->getMandrillMessage($message);
+
+        $this->assertArrayHasKey('subaccount', $mandrillMessage);
+        $this->assertEquals('account-123', $mandrillMessage['subaccount']);
 
         $this->assertMessageSendable($message);
     }
