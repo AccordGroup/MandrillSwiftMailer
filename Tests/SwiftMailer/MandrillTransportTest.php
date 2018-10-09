@@ -477,4 +477,18 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         }
     }
 
+    public function testDomainTrackingHeaders()
+    {
+        $transport = $this->createTransport();
+        $message = new \Swift_Message('Test Subject', 'Foo bar');
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name');
+        $message->getHeaders()->addTextHeader('X-MC-TrackingDomain', 'some.custom-domain.com');
+        $mandrillMessage = $transport->getMandrillMessage($message);
+
+        $this->assertEquals('some.custom-domain.com', $mandrillMessage['tracking_domain']);
+        $this->assertMessageSendable($message);
+    }
+
 }

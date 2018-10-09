@@ -388,6 +388,9 @@ class MandrillTransport implements Swift_Transport
                     case 'X-MC-GoogleAnalyticsCampaign':
                         $mandrillMessage['google_analytics_campaign'] = $header->getValue();
                         break;
+                    case 'X-MC-TrackingDomain':
+                        $mandrillMessage['tracking_domain'] = $header->getValue();
+                        break;
                     default:
                         if (strncmp($header->getFieldName(), 'X-', 2) === 0) {
                             $headers[$header->getFieldName()] = $header->getValue();
