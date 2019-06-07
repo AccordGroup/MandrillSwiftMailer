@@ -382,6 +382,10 @@ class MandrillTransport implements Swift_Transport
         if ($message->getHeaders()->has('X-MC-GoogleAnalyticsCampaign')) {
             $mandrillMessage['google_analytics_campaign'] = $message->getHeaders()->get('X-MC-GoogleAnalyticsCampaign')->getValue();
         }
+        
+        if ($message->getHeaders()->has('X-MC-Important')) {
+            $mandrillMessage['important'] = $message->getHeaders()->get('X-MC-Important')->getValue();
+        }
 
         if ($this->getSubaccount()) {
             $mandrillMessage['subaccount'] = $this->getSubaccount();

@@ -57,6 +57,20 @@ class MandrillTransportTest extends \PHPUnit_Framework_TestCase{
         $this->assertEquals(true, $mandrillMessage['inline_css']);
         $this->assertMessageSendable($message);
     }
+    
+    public function testImportant()
+    {
+        $transport = $this->createTransport();
+        $message = new \Swift_Message('Test Subject', 'Foo bar');
+        $message
+            ->addTo('to@example.com', 'To Name')
+            ->addFrom('from@example.com', 'From Name')
+        ;
+        $message->getHeaders()->addTextHeader('X-MC-Important', true);
+        $mandrillMessage = $transport->getMandrillMessage($message);
+        $this->assertEquals(true, $mandrillMessage['important']);
+        $this->assertMessageSendable($message);
+    }
 
     public function testGoogleAnalytics()
     {

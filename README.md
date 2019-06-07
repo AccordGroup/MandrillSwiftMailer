@@ -63,3 +63,9 @@ Automatically inline all CSS styles provided in the message HTML - only for HTML
 Mandrill automatically adds a List-Unsubscribe header to all emails that include a Mandrill-generated unsubscribe link. If recipients use an email program that supports the List-Unsubscribe header (like Hotmail, AOL, or Yahoo), they can use the option in their email program to unsubscribe.
    
     $message->getHeaders()->addTextHeader('List-Unsubscribe', '<mailto:unsubscribe@example.com>');
+
+### Important
+
+Whether or not this message is important, and should be delivered ahead of non-important messages.
+
+    $message->getHeaders()->addTextHeader('X-MC-Important', true);
