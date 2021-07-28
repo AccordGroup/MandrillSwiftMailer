@@ -4,7 +4,10 @@
 
 A SwiftMailer transport implementation for Mandrill
 
-If you'd like us to implement more [Mandrill-specific features](https://mandrillapp.com/api/docs/messages.JSON.html), let us know by [submitting an issue](https://github.com/AccordGroup/MandrillSwiftMailer/issues/new).
+**!! This library is no longer being actively maintained. We are accepting pull requests, but cannot guarantee a timeline for releases. !!**
+
+If possible, we recommend migrating your projects to the `symfony/mailer` component.
+
 
 ## Installation
 
