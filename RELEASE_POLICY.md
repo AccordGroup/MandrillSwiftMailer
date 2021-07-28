@@ -1,5 +1,11 @@
 # Release Policy
 
+**This library is no longer being actively maintained. We are accepting pull requests, but cannot guarantee a timeline for releases.**
+
+If possible, we recommend migrating your projects to the `symfony/mailer` component.
+
+----------------
+
 * Releases must only be created from the master branch
 * Releases may only be created when the latest Travis CI build is passing
 
